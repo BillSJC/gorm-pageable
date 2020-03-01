@@ -52,7 +52,7 @@ var use0Page bool
 // 	//your recovery
 // 	func myRecovery(){
 // 		if err := recover ; err != nil {
-// 			fmt.Println("something happend")
+// 			fmt.Println("something happened")
 // 			fmt.Println(err)
 // 			//then you can do some logs...
 // 		}
