@@ -51,6 +51,7 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
         Where(&User{Active:true})
     //use PageQuery to get data
     resp,err := pageable.PageQuery(page,rowsPerPage,handler,&resultSet)
+    // you can use both resp.ResultSet or the resultSet you input to access the result
     // handle error
     if err != nil {
         panic(err)
@@ -61,11 +62,14 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
 	fmt.Println(resp.RawCount)   //RawCount: total raw of query
 	fmt.Println(resp.RawPerPage) //RawPerPage: rpp
 	fmt.Println(resp.ResultSet)  //ResultSet: result data
+    fmt.Println(resultSet)          //the same as resp.ResultSet and have the raw type
 	fmt.Println(resp.FirstPage)  //FirstPage: if the result is the first page
 	fmt.Println(resp.LastPage)   //LastPage: if the result is the last page
 	fmt.Println(resp.Empty)  //Empty: if the result is empty
 }
 ```
+
+`Notice:` when access to the result, you can use both `resp.ResultSet` in Response or the param `resultSet` you input into the function, both of then have same pointer and same data, but the type of `resp.ResultSet` is `interface{}` and you mat need to convert to the raw type if you need to do any operation of the result set
 
 ## Guidance
 
