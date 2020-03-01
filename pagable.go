@@ -1,6 +1,7 @@
 package pageable
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"runtime/debug"
@@ -9,10 +10,10 @@ import (
 
 // Response: Base response of query
 type Response struct {
-	PageNow    uint        //PageNow: current page of query
-	PageCount  uint        //PageCount: total page of the query
-	RawCount   uint        //RawCount: total raw of query
-	RawPerPage uint        //RawPerPage: rpp
+	PageNow    int         //PageNow: current page of query
+	PageCount  int         //PageCount: total page of the query
+	RawCount   int         //RawCount: total raw of query
+	RawPerPage int         //RawPerPage: rpp
 	ResultSet  interface{} //ResultSet: result data
 	FirstPage  bool        //FirstPage: if the result is the first page
 	LastPage   bool        //LastPage: if the result is the last page
@@ -20,7 +21,13 @@ type Response struct {
 }
 
 // getLimitOffset (private) get LIMIT and OFFSET keyword in SQL
-func getLimitOffset(page, rpp uint) (limit, offset uint) {
+func getLimitOffset(page, rpp int) (limit, offset int) {
+	if page < 0 {
+		page = 0
+	}
+	if rpp < 1 {
+		rpp = defaultRpp
+	}
 	return rpp, page * rpp
 }
 
@@ -30,9 +37,20 @@ type recoveryHandler func()
 // recovery : handler of panic
 var recovery recoveryHandler
 
-// setRecovery Set custom recovery
-func setRecovery(handler func()) {
+var defaultRpp int
+
+// SetRecovery Set custom recovery
+func SetRecovery(handler func()) {
 	recovery = handler
+}
+
+// SetDefaultRPP Set default rpp
+func SetDefaultRPP(rpp int) error {
+	if rpp < 1 {
+		return errors.New("invalid input rpp")
+	}
+	defaultRpp = rpp
+	return nil
 }
 
 // defaultRecovery : print base recover info
@@ -51,29 +69,35 @@ func defaultRecovery() {
 // init: use default recovery
 func init() {
 	//use default recovery
-	recovery = defaultRecovery
+	SetRecovery(defaultRecovery)
+	//use default rpp
+	_ = SetDefaultRPP(25)
 }
 
 // PageQuery:  main handler of query
 // page: 1 for the first page
 // resultPtr : MUST input a Slice or it will be a error
 // queryHandler : MUST have DB.Module  or it will be a error
-func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr interface{}) (*Response, error) {
+func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interface{}) (*Response, error) {
 	//recovery
 	defer recovery()
-	var count uint
-	count = 0
+	count := 0
 	// use page - 1 in query
 	limit, offset := getLimitOffset(page-1, rawPerPage)
+	// get total count of the table
 	queryHandler.Count(&count)
+	// get result set by param
 	queryHandler.Limit(limit).Offset(offset).Find(resultPtr)
+	// handle DB error
 	if err := queryHandler.Error; err != nil {
 		return nil, err
 	}
+	// get page count
 	PageCount := count / rawPerPage
 	if count%rawPerPage != 0 {
 		PageCount++
 	}
+	// prepare base response
 	return &Response{
 		PageNow:    page,
 		PageCount:  PageCount,
