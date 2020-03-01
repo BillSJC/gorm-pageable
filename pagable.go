@@ -65,7 +65,7 @@ func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr inte
 	if err := queryHandler.Error; err != nil {
 		return nil, err
 	}
-	PageCount := rawPerPage / count
+	PageCount := count / rawPerPage
 	if rawPerPage%count != 0 {
 		PageCount++
 	}
@@ -76,6 +76,6 @@ func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr inte
 		ResultSet:  resultPtr,
 		FirstPage:  page == 0,
 		LastPage:   page == PageCount,
-		Empty:      (page > PageCount) || count == 0,
+		Empty:      (page >= PageCount) || count == 0,
 	}, nil
 }
