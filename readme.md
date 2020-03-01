@@ -1,6 +1,8 @@
 # Gorm-Pageable
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/BillSJC/gorm-pageable)](https://goreportcard.com/report/github.com/BillSJC/gorm-pageable)
+[![Build Status](https://travis-ci.org/BillSJC/gorm-pageable.svg?branch=master)](https://travis-ci.org/BillSJC/gorm-pageable)
+[![codecov](https://codecov.io/gh/BillSJC/gorm-pageable/branch/master/graph/badge.svg)](https://codecov.io/gh/BillSJC/gorm-pageable)
 
 A page query management of GORM
 
