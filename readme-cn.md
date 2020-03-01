@@ -4,21 +4,19 @@
 [![Build Status](https://travis-ci.org/BillSJC/gorm-pageable.svg?branch=master)](https://travis-ci.org/BillSJC/gorm-pageable)
 [![codecov](https://codecov.io/gh/BillSJC/gorm-pageable/branch/master/graph/badge.svg)](https://codecov.io/gh/BillSJC/gorm-pageable)
 
-A page query management of GORM 
+一个快捷的gorm翻页查询器工具
 
-[->中文文档](readme-cn.md)
+## 使用
 
-## Installation
-
-We Recommend to use package manager `vgo` to manage this package
+强烈推荐使用官方包管理 `vgo` 安装
 
 ```go
 import pageable "github.com/BillSJC/gorm-pageable"
 ```
 
-## Usage
+## 使用方法
 
-Just prepare a struct and FOLLOW the code below
+在需要进行翻页流程的地方按照如下方式接入即可
 
 ```go
 package main
@@ -31,7 +29,7 @@ import (
 
 var DB *gorm.DB //your gorm DB connection
 
-// the struct you want to search
+// 表结构体
 type User struct{
     gorm.Model
     Active bool
@@ -39,28 +37,28 @@ type User struct{
     Age uint
 }
 
-// a function to get ddata
+// 某个需要翻页的函数
 func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
-    //your empty result set
+    //你的空的结果数组
     resultSet := make([]*User,0,30)
-    //prepare a handler to query
+    //准备一个写好查询条件的gorm.DB，注意要执行过Module()
     handler := DB.
         Module(&User{}).
         Where(&User{Active:true})
-    //use PageQuery to get data
+    //进行查询
     resp,err := pageable.PageQuery(page,rowsPerPage,handler,&resultSet)
-    // handle error
+    // 处理报错
     if err != nil {
         panic(err)
     }
-    //Here are the response
-	fmt.Println(resp.PageNow)    //PageNow: current page of query
-	fmt.Println(resp.PageCount)  //PageCount: total page of the query
-	fmt.Println(resp.RawCount)   //RawCount: total raw of query
-	fmt.Println(resp.RawPerPage) //RawPerPage: rpp
-	fmt.Println(resp.ResultSet)  //ResultSet: result data
-	fmt.Println(resp.FirstPage)  //FirstPage: if the result is the first page
-	fmt.Println(resp.LastPage)   //LastPage: if the result is the last page
-	fmt.Println(resp.Empty)  //Empty: if the result is empty
+    // 获得结果
+	fmt.Println(resp.PageNow)    //PageNow: 当前页
+	fmt.Println(resp.PageCount)  //PageCount: 总页码数
+	fmt.Println(resp.RawCount)   //RawCount: 总行数
+	fmt.Println(resp.RawPerPage) //RawPerPage: 每页结果数量
+	fmt.Println(resp.ResultSet)  //ResultSet: 返回的数组
+	fmt.Println(resp.FirstPage)  //FirstPage: 是否是第一页
+	fmt.Println(resp.LastPage)   //LastPage: 是否是最后一页
+	fmt.Println(resp.Empty)  //Empty: 该页结果是否为空
 }
 ```
