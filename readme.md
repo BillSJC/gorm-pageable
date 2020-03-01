@@ -66,3 +66,53 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
 	fmt.Println(resp.Empty)  //Empty: if the result is empty
 }
 ```
+
+## Guidance
+
+### Use `0` as the first page
+
+the default first page is `1`. However,if u want to use `0` as the first page, just follow this step:
+
+```go
+    pageable.Use0AsFirstPage()
+```
+
+### Set Default Result Per Page(rpp)
+
+Sometimes you just want to use same `rpp` in every query, then u just need do this:
+
+```go
+    pageable.SetDefaultRPP(25) //set 25 rows per page in every query
+```
+
+And next time, you can use rpp=0 to use Default rpp
+
+```go
+    pageable.PageQuery(page:1, rpp:0, queryHandler: ..., resultPtr: ...)
+```
+
+### Use custom recovery
+
+The default recovery will only print stack trace. If you want to use your custom Recovery handler, just follow the step:
+
+```go
+package main
+import (
+    "fmt"
+    pageable "github.com/BillSJC/gorm-pageable"
+)
+
+//your recovery
+func myRecovery(){
+    if err := recover ; err != nil {
+        fmt.Println("something happend")
+        fmt.Println(err)
+        //then you can do some logs...
+    } 
+}
+
+func init(){
+    //setup your recovery
+    pageable.SetRecovery(myRecovery)
+}
+```

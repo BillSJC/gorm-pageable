@@ -39,10 +39,32 @@ var recovery recoveryHandler
 
 var defaultRpp int
 
+var use0Page bool
+
 // SetRecovery Set custom recovery
-func SetRecovery(handler func()) {
-	recovery = handler
-}
+// Here are some sample of the custom recovery
+// 	package main
+// 	import (
+// 		"fmt"
+// 		pageable "github.com/BillSJC/gorm-pageable"
+// 	)
+
+// 	//your recovery
+// 	func myRecovery(){
+// 		if err := recover ; err != nil {
+// 			fmt.Println("something happend")
+// 			fmt.Println(err)
+// 			//then you can do some logs...
+// 		}
+// 	}
+//
+// 	func init(){
+// 		//setup your recovery
+// 		pageable.SetRecovery(myRecovery)
+// 	}
+// 	func SetRecovery(handler func()) {
+// 		recovery = handler
+// 	}
 
 // SetDefaultRPP Set default rpp
 func SetDefaultRPP(rpp int) error {
@@ -72,6 +94,14 @@ func init() {
 	SetRecovery(defaultRecovery)
 	//use default rpp
 	_ = SetDefaultRPP(25)
+	// use 1 as default page
+	use0Page = false
+}
+
+// Use0AsFirstPage : the default first page is 1. However,if u want to use 0 as the first page, just follow this step:
+// 	pageable.Use0AsFirstPage()
+func Use0AsFirstPage() {
+	use0Page = true
 }
 
 // PageQuery:  main handler of query
@@ -82,8 +112,13 @@ func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interf
 	//recovery
 	defer recovery()
 	count := 0
-	// use page - 1 in query
-	limit, offset := getLimitOffset(page-1, rawPerPage)
+	// get limit and offSet
+	var limit, offset int
+	if !use0Page {
+		limit, offset = getLimitOffset(page-1, rawPerPage)
+	} else {
+		limit, offset = getLimitOffset(page, rawPerPage)
+	}
 	// get total count of the table
 	queryHandler.Count(&count)
 	// get result set by param
