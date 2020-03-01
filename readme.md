@@ -1,5 +1,7 @@
 # Gorm-Pageable
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/BillSJC/gorm-pageable)](https://goreportcard.com/report/github.com/BillSJC/gorm-pageable)
+
 A page query management of GORM
 
 ## Installation
