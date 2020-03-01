@@ -18,7 +18,7 @@ jobs:
 
       - name: Test
         run: |
-          go test
+          go test  -race -coverprofile=coverage.txt -covermode=atomic
 
       - name: codeCovReport
         env:
