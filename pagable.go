@@ -11,6 +11,7 @@ import (
 type Response struct {
 	PageNow    uint        //PageNow: current page of query
 	PageCount  uint        //PageCount: total page of the query
+	RawCount   uint        //RawCount: total raw of query
 	RawPerPage uint        //RawPerPage: rpp
 	ResultSet  interface{} //ResultSet: result data
 	FirstPage  bool        //FirstPage: if the result is the first page
@@ -70,13 +71,14 @@ func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr inte
 		return nil, err
 	}
 	PageCount := count / rawPerPage
-	if rawPerPage%count != 0 {
+	if count%rawPerPage != 0 {
 		PageCount++
 	}
 	return &Response{
 		PageNow:    page,
 		PageCount:  PageCount,
 		RawPerPage: rawPerPage,
+		RawCount:   count,
 		ResultSet:  resultPtr,
 		FirstPage:  page == 1,
 		LastPage:   page == PageCount,
