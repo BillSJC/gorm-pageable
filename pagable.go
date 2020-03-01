@@ -62,9 +62,9 @@ var use0Page bool
 // 		//setup your recovery
 // 		pageable.SetRecovery(myRecovery)
 // 	}
-// 	func SetRecovery(handler func()) {
-// 		recovery = handler
-// 	}
+func SetRecovery(handler func()) {
+	recovery = handler
+}
 
 // SetDefaultRPP Set default rpp
 func SetDefaultRPP(rpp int) error {
