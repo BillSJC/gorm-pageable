@@ -54,12 +54,16 @@ func init() {
 }
 
 // PageQuery:  main handler of query
+// page: 1 for the first page
+// resultPtr : MUST input a Slice or it will be a error
+// queryHandler : MUST have DB.Module  or it will be a error
 func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr interface{}) (*Response, error) {
 	//recovery
 	defer recovery()
 	var count uint
 	count = 0
-	limit, offset := getLimitOffset(page, rawPerPage)
+	// use page - 1 in query
+	limit, offset := getLimitOffset(page-1, rawPerPage)
 	queryHandler.Count(&count)
 	queryHandler.Limit(limit).Offset(offset).Find(resultPtr)
 	if err := queryHandler.Error; err != nil {
@@ -74,8 +78,8 @@ func PageQuery(page uint, rawPerPage uint, queryHandler *gorm.DB, resultPtr inte
 		PageCount:  PageCount,
 		RawPerPage: rawPerPage,
 		ResultSet:  resultPtr,
-		FirstPage:  page == 0,
+		FirstPage:  page == 1,
 		LastPage:   page == PageCount,
-		Empty:      (page >= PageCount) || count == 0,
+		Empty:      (page > PageCount) || count == 0,
 	}, nil
 }
