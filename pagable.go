@@ -42,6 +42,7 @@ var defaultRpp int
 var use0Page bool
 
 // SetRecovery Set custom recovery
+//
 // Here are some sample of the custom recovery
 // 	package main
 // 	import (
@@ -105,8 +106,11 @@ func Use0AsFirstPage() {
 }
 
 // PageQuery:  main handler of query
+//
 // page: 1 for the first page
+//
 // resultPtr : MUST input a Slice or it will be a error
+//
 // queryHandler : MUST have DB.Module  or it will be a error
 func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interface{}) (*Response, error) {
 	//recovery

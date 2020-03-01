@@ -13,6 +13,7 @@
 // 		// handle error
 // 		f err != nil {
 // 			panic(err)
+// 		}
 // 	}
 // And then you can print this value to see the page info
 // 		fmt.Println(resp.PageNow)    //PageNow: current page of query
@@ -23,14 +24,13 @@
 // 		fmt.Println(resp.FirstPage)  //FirstPage: if the result is the first page
 // 		fmt.Println(resp.LastPage)   //LastPage: if the result is the last page
 // 		fmt.Println(resp.Empty)  //Empty: if the result is empty
-// 	}
 // And here a clear JSON object of the Response LIKE Spring Pageable
 // 	{
 // 		"PageNow": 2,
 // 		"PageCount": 1,
 // 		"RawCount": 1,
 // 		"RawPerPage": 25,
-// 		"ResultSet": [],
+// 		"ResultSet": [{...your data struct}],
 // 		"FirstPage": false,
 // 		"LastPage": false,
 // 		"Empty": true
