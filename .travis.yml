@@ -7,9 +7,12 @@ go:
   - "1.14"
   - master
 
-install: go build
+install:
+  - go mod tidy
+  - go build
 
 script:
+  - go mod tidy
   - go test -race -coverprofile=coverage.txt -covermode=atomic
 
 after_success:

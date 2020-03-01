@@ -18,6 +18,7 @@ jobs:
 
       - name: Test
         run: |
+          go mod tidy
           go test  -race -coverprofile=coverage.txt -covermode=atomic
 
       - name: codeCovReport
