@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//Response: Base response of query
+// Response: Base response of query
 type Response struct {
 	PageNow    int         //PageNow: current page of query
 	PageCount  int         //PageCount: total page of the query
@@ -74,7 +74,7 @@ func init() {
 	_ = SetDefaultRPP(25)
 }
 
-//PageQuery:  main handler of query
+// PageQuery:  main handler of query
 // page: 1 for the first page
 // resultPtr : MUST input a Slice or it will be a error
 // queryHandler : MUST have DB.Module  or it will be a error
