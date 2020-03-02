@@ -18,6 +18,8 @@ type Response struct {
 	FirstPage  bool        //FirstPage: if the result is the first page
 	LastPage   bool        //LastPage: if the result is the last page
 	Empty      bool        //Empty: if the result is empty
+	StartRow   int         //The number of first record the the resultSet
+	EndRow     int         //The number of last record the the resultSet
 }
 
 // getLimitOffset (private) get LIMIT and OFFSET keyword in SQL
@@ -136,6 +138,15 @@ func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interf
 	if count%rawPerPage != 0 {
 		PageCount++
 	}
+	startRow, endRow, empty, lastPage := 0, 0, (page > PageCount) || count == 0, page == PageCount
+	if !empty {
+		startRow = page * rawPerPage
+		if !lastPage {
+			endRow = (page+1)*rawPerPage - 1
+		} else {
+			endRow = count
+		}
+	}
 	// prepare base response
 	return &Response{
 		PageNow:    page,
@@ -144,7 +155,9 @@ func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interf
 		RawCount:   count,
 		ResultSet:  resultPtr,
 		FirstPage:  page == 1,
-		LastPage:   page == PageCount,
-		Empty:      (page > PageCount) || count == 0,
+		LastPage:   lastPage,
+		Empty:      empty,
+		StartRow:   startRow,
+		EndRow:     endRow,
 	}, nil
 }
