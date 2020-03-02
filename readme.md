@@ -66,8 +66,8 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
 	fmt.Println(resp.FirstPage)  //FirstPage: if the result is the first page
 	fmt.Println(resp.LastPage)   //LastPage: if the result is the last page
 	fmt.Println(resp.Empty)  //Empty: if the result is empty
-	fmt.Println(resp.StartRow)  //Empty: the first row of the result set, 0 when result set is empty
-	fmt.Println(resp.EndRow)  //Empty: the last row of the result set, 0 when result set is empty
+	fmt.Println(resp.StartRow)  //StartRow: the first row of the result set, 0 when result set is empty
+	fmt.Println(resp.EndRow)  //EndRow: the last row of the result set, 0 when result set is empty
 }
 ```
 
