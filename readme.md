@@ -62,10 +62,12 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
 	fmt.Println(resp.RawCount)   //RawCount: total raw of query
 	fmt.Println(resp.RawPerPage) //RawPerPage: rpp
 	fmt.Println(resp.ResultSet)  //ResultSet: result data
-    fmt.Println(resultSet)          //the same as resp.ResultSet and have the raw type
+	fmt.Println(resultSet)          //the same as resp.ResultSet and have the raw type
 	fmt.Println(resp.FirstPage)  //FirstPage: if the result is the first page
 	fmt.Println(resp.LastPage)   //LastPage: if the result is the last page
 	fmt.Println(resp.Empty)  //Empty: if the result is empty
+	fmt.Println(resp.StartRow)  //Empty: the first row of the result set, 0 when result set is empty
+	fmt.Println(resp.EndRow)  //Empty: the last row of the result set, 0 when result set is empty
 }
 ```
 
