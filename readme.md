@@ -64,7 +64,8 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
         fmt.Println(err)
         return nil,err
     }
-    //Here are the response
+    // Here are the response
+    // NOTICE:  all element of Response should be READ ONLY! once it changed, the logic of the query may broke
 	fmt.Println(resp.PageNow)    //PageNow: current page of query
 	fmt.Println(resp.PageCount)  //PageCount: total page of the query
 	fmt.Println(resp.RawCount)   //RawCount: total raw of query

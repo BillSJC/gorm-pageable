@@ -14,6 +14,8 @@
 // 		f err != nil {
 // 			panic(err)
 // 		}
+//		// goto Next Page
+//		resp,err := resp.GetNextPage()	//new *Response if next page
 // 	}
 // And then you can print this value to see the page info
 // 		fmt.Println(resp.PageNow)    //PageNow: current page of query
