@@ -20,6 +20,7 @@ type Response struct {
 	Empty      bool        //Empty: if the result is empty
 	StartRow   int         //The number of first record the the resultSet
 	EndRow     int         //The number of last record the the resultSet
+	handler    *gorm.DB    //the handler of gorm Query
 }
 
 // getLimitOffset (private) get LIMIT and OFFSET keyword in SQL
@@ -114,6 +115,8 @@ func Use0AsFirstPage() {
 // resultPtr : MUST input a Slice or it will be a error
 //
 // queryHandler : MUST have DB.Module  or it will be a error
+//
+// Remember: all element of Response should be READ ONLY! once it changed, the logic of the query may broke
 func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interface{}) (*Response, error) {
 	//recovery
 	defer recovery()
@@ -159,5 +162,52 @@ func PageQuery(page int, rawPerPage int, queryHandler *gorm.DB, resultPtr interf
 		Empty:      empty,
 		StartRow:   startRow,
 		EndRow:     endRow,
+		handler:    queryHandler,
 	}, nil
+}
+
+// SetHandler: once you want to change the query handler, you can do this to replace it
+// 		resp.SetHandler(DB.Model(&User{}).Where(&User{UserName:"john"}))	//set the handler
+func (r *Response) SetHandler(handler *gorm.DB) {
+	r.handler = handler
+}
+
+// GetNextPage: return next page`s Response
+// 	func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
+// 	//your empty result set
+// 		resultSet := make([]*User,0,30)
+// 		//prepare a handler to query
+// 		handler := DB.
+// 			Module(&User{}).
+// 			Where(&User{Active:true})
+// 		//use PageQuery to get data (this page)
+// 		resp,err := pageable.PageQuery(page,rowsPerPage,handler,&resultSet)
+// 		// handle error
+// 		f err != nil {
+// 			panic(err)
+// 		}
+//		//get next page
+//		resp,err := resp.GetNextPage()	//Response of next page
+// 	}
+func (r *Response) GetNextPage() (*Response, error) {
+	return PageQuery(r.PageNow+1, r.RawPerPage, r.handler, r.ResultSet)
+}
+
+// GetNextPage: return last page`s Response
+func (r *Response) GetLastPage() (*Response, error) {
+	return PageQuery(r.PageNow-1, r.RawPerPage, r.handler, r.ResultSet)
+}
+
+// GetNextPage: return end page`s Response
+func (r *Response) GetEndPage() (*Response, error) {
+	return PageQuery(r.PageCount, r.RawPerPage, r.handler, r.ResultSet)
+}
+
+// GetFirstPage: return first page`s Response
+func (r *Response) GetFirstPage() (*Response, error) {
+	p := 1
+	if use0Page {
+		p = 0
+	}
+	return PageQuery(p, r.RawPerPage, r.handler, r.ResultSet)
 }

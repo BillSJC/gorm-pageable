@@ -51,10 +51,18 @@ func getResultSet (page int,rowsPerPage int)(*pageable.Response,error){
         Where(&User{Active:true})
     //use PageQuery to get data
     resp,err := pageable.PageQuery(page,rowsPerPage,handler,&resultSet)
+    // if need, you can turn to next/last page
+    resp,err = resp.GetNextPage() //to next page
+    resp,err = resp.GetLastPage() //to last page
+    resp,err = resp.GetFirstPage() //to first page
+    resp,err = resp.GetEndPage() //to end page
     // you can use both resp.ResultSet or the resultSet you input to access the result
     // handle error
     if err != nil {
-        panic(err)
+        //print the err or do sth else
+        fmt.Println("something happened...")
+        fmt.Println(err)
+        return nil,err
     }
     //Here are the response
 	fmt.Println(resp.PageNow)    //PageNow: current page of query
